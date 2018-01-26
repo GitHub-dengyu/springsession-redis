@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p" 
+    xmlns:context="http://www.springframework.org/schema/context" 
+    xmlns:mvc="http://www.springframework.org/schema/mvc" 
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd 
+        http://www.springframework.org/schema/mvc 
+        http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd 
+        http://www.springframework.org/schema/task 
+        http://www.springframework.org/schema/task/spring-task-4.2.xsd">
+    
+    <context:annotation-config />
+    <!-- 配置根视图 -->
+    <mvc:view-controller path="/" view-name="index"/>
+    
+    <!-- 激活基于注解的配置 @RequestMapping, @ExceptionHandler,数据绑定 ,@NumberFormat ,
+    @DateTimeFormat ,@Controller ,@Valid ,@RequestBody ,@ResponseBody等  -->
+    <mvc:annotation-driven />
+    
+ 	<context:component-scan base-package="com.huato.*.controller" />  
+ 	
+    <!-- 静态资源配置 -->
+    <mvc:resources location="/static/" mapping="/static/**"></mvc:resources>
+    <!--spring4配置 避免IE执行AJAX时，返回JSON出现下载文件 --> 
+  	<bean id="mappingJacksonHttpMessageConverter"  
+        class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">  
+        <property name="supportedMediaTypes">  
+            <list>  
+                <value>text/html;charset=UTF-8</value>  
+            </list>  
+        </property>
+        <!-- 处理responseBody里面日期类型，将其中的日期设置为指定的日期格式 -->
+		<property name="objectMapper">
+			<bean class="com.fasterxml.jackson.databind.ObjectMapper">
+				<property name="dateFormat">
+					<bean class="java.text.SimpleDateFormat">
+						<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />
+					</bean>
+				</property>
+			</bean>  
+		</property>
+    </bean>
+  
+    <!-- 启动SpringMVC的注解功能，完成请求和注解POJO的映射 -->  
+    <bean  
+        class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">  
+        <property name="messageConverters">  
+            <list>  
+           		 <!-- json转换器 -->  
+                <ref bean="mappingJacksonHttpMessageConverter" />
+            </list>  
+        </property>  
+    </bean>  
+
+    <!-- 视图层配置 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/view/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+</beans>
