@@ -14,7 +14,8 @@
         http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd 
         http://www.springframework.org/schema/task 
         http://www.springframework.org/schema/task/spring-task-4.2.xsd">
-  
+        
+        
  	<context:component-scan base-package="com.huato.redissession" >
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
@@ -47,6 +48,20 @@
    
   <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">  
        <property name="connectionFactory" ref="jedisConnectionFactory"/>  
+        <!--对各种数据进行序列化的选择方式 -->
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+         <!--<property name="hashValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>-->
+        
    </bean>
    
 </beans>
